@@ -30,6 +30,35 @@ const resolvers = {
       db.authors.find((author) => author.id === parent.author_id),
     game: (parent) => db.games.find((game) => game.id === parent.game_id),
   },
+  Mutation: {
+    deleteGame: (_, args) => {
+      db.games = [...db.games.filter((game) => game.id !== args.id)];
+      return db.games;
+    },
+    addGame: (_, args) => {
+      const gameId = db.games.length + 1;
+      let game = {
+        ...args.game,
+        id: gameId,
+      };
+      db.games.push(game);
+      return game;
+    },
+    updateGame: (_, args) => {
+      db.games = [
+        ...db.games.map((game) => {
+          if (game.id === args.id) {
+            return {
+              ...game,
+              ...args.edit,
+            };
+          }
+          return game;
+        }),
+      ];
+      return db.games.find((game) => game.id === args.id);
+    },
+  },
 };
 
 // server setup
